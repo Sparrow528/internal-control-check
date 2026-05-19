@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>企业税务内控自评 — 宇守信咨询</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; background:#f0f2f5; color:#2d3436; padding-bottom:60px; }
+.header { background:linear-gradient(135deg,#1a0a2e,#3b1c6e); color:white; padding:32px 20px 24px; text-align:center; }
+.header h1 { font-size:22px; font-weight:700; margin-bottom:6px; }
+.header p { font-size:13px; opacity:0.85; }
+.header .badge { display:inline-block; background:rgba(255,255,255,0.2); border-radius:20px; padding:4px 14px; font-size:11px; margin-top:8px; }
+.tabs { display:flex; background:white; box-shadow:0 1px 4px rgba(0,0,0,0.08); position:sticky; top:0; z-index:10; }
+.tab { flex:1; text-align:center; padding:14px 0; font-size:14px; font-weight:500; color:#888; cursor:pointer; border-bottom:3px solid transparent; transition:all .2s; }
+.tab.active { color:#3b1c6e; border-bottom-color:#3b1c6e; }
+.panel { display:none; padding:16px; }
+.panel.active { display:block; }
+.card { background:white; border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.06); margin-bottom:12px; }
+.card-title { background:#f0f4ff; padding:10px 16px; font-size:13px; font-weight:600; color:#3b1c6e; border-bottom:1px solid #e0e7ff; }
+.form-row { padding:10px 16px; border-bottom:1px solid #f5f5f5; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.form-row label { font-size:13px; color:#444; min-width:150px; flex-shrink:0; }
+.form-row input,.form-row select { padding:8px 12px; border:1px solid #e0e0e0; border-radius:8px; font-size:13px; flex:1; min-width:80px; max-width:200px; background:#fff8e1; line-height:44px; height:44px; }
+.form-row input:focus,.form-row select:focus { outline:none; border-color:#3b82f6; }
+.form-row .unit { font-size:12px; color:#888; }
+.yesno { display:flex; gap:8px; }
+.yesno span { padding:4px 16px; border-radius:16px; font-size:13px; cursor:pointer; border:1px solid #ddd; color:#666; }
+.yesno span.sel-yes { background:linear-gradient(135deg,#1a0a2e,#3b1c6e); color:white; border-color:#3b82f6; }
+.yesno span.sel-no { background:#e8ecf1; color:#999; border-color:#ddd; }
+.fixed-bottom { position:sticky; bottom:0; background:white; padding:12px 16px; display:flex; gap:10px; box-shadow:0 -2px 8px rgba(0,0,0,0.06); z-index:10; }
+.fixed-bottom button { flex:1; padding:12px; border-radius:10px; font-size:14px; font-weight:600; border:none; cursor:pointer; }
+.btn-primary { background:linear-gradient(135deg,#1a0a2e,#3b1c6e); color:white; }
+.btn-primary:hover { opacity:0.9; }
+.btn-secondary { background:#e8ecf1; color:#555; }
+
+.score-card { background:linear-gradient(135deg,#1a0a2e,#3b1c6e); color:white; border-radius:16px; padding:28px 20px; text-align:center; margin-bottom:16px; }
+.score-card .label { font-size:13px; opacity:0.85; }
+.score-card .score { font-size:40px; font-weight:800; margin:6px 0; }
+.score-card .grade { font-size:16px; font-weight:600; margin-bottom:4px; }
+.score-card .suggestion { font-size:13px; opacity:0.9; line-height:1.6; }
+.result-summary { background:linear-gradient(135deg,#1a0a2e,#3b1c6e); color:white; border-radius:16px; padding:28px 20px; text-align:center; margin-bottom:16px; }
+.result-summary .row { display:flex; justify-content:space-around; margin-top:12px; flex-wrap:wrap; gap:8px; }
+.result-summary .item { flex:1; min-width:100px; }
+.result-summary .item .label { font-size:11px; opacity:0.85; }
+.result-summary .item .val { font-size:22px; font-weight:800; margin:4px 0; }
+.result-summary .item .sub { font-size:12px; opacity:0.85; }
+
+.dim-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px; }
+.dim-card { background:white; border-radius:12px; padding:16px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.dim-card .name { font-size:12px; color:#888; margin-bottom:4px; }
+.dim-card .dscore { font-size:20px; font-weight:700; }
+.dim-card .dstatus { font-size:11px; margin-top:4px; padding:2px 10px; border-radius:10px; display:inline-block; }
+.low { background:#e6f7e6; color:#16a34a; }
+.mid { background:#fef9e7; color:#d97706; }
+.high { background:#feeaea; color:#dc2626; }
+.pass { background:#e6f7e6; color:#16a34a; }
+.warn { background:#fef9e7; color:#d97706; }
+.danger { background:#feeaea; color:#dc2626; }
+.fail { background:#feeaea; color:#dc2626; }
+.caution { background:#fef9e7; color:#d97706; }
+.rate-green { background:#e6f7e6; color:#16a34a; }
+.rate-yellow { background:#fef9e7; color:#d97706; }
+.rate-red { background:#feeaea; color:#dc2626; }
+
+.help-card { background:white; border-radius:12px; padding:20px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.help-card h3 { font-size:15px; margin-bottom:8px; color:#3b1c6e; }
+.help-card p,.help-card li { font-size:13px; color:#555; line-height:1.8; }
+.check-list { list-style:none; padding:0; }
+.check-list li { padding:6px 0; font-size:13px; color:#444; border-bottom:1px solid #f5f5f5; display:flex; align-items:center; gap:8px; }
+.check-list li:last-child { border-bottom:none; }
+.detail-item { padding:12px 16px; border-bottom:1px solid #f5f5f5; display:flex; justify-content:space-between; align-items:center; }
+.detail-item:last-child { border-bottom:none; }
+.detail-item .dlabel { font-size:13px; color:#555; }
+.detail-item .dval { font-size:14px; font-weight:600; }
+.detail-item .dval.pass { color:#16a34a; }
+.detail-item .dval.warn { color:#d97706; }
+.detail-item .dval.danger { color:#dc2626; }
+.result-card { background:white; border-radius:12px; padding:16px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.result-card h3 { font-size:14px; color:#3b1c6e; margin-bottom:8px; }
+.result-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #f5f5f5; font-size:13px; }
+.result-row:last-child { border-bottom:none; }
+.result-row .label { color:#555; }
+.result-row .val { font-weight:600; }
+.result-row.total { border-top:2px solid #3b1c6e; padding-top:8px; margin-top:4px; font-weight:700; }
+.result-row.total .val { color:#3b1c6e; font-size:16px; }
+.result-green { color:#16a34a; }
+.result-red { color:#dc2626; }
+.result-orange { color:#d97706; }
+
+.member-banner { background:linear-gradient(135deg,#0f0c29,#302b63,#24243e); border-radius:12px; padding:20px; text-align:center; margin-top:16px; }
+.member-banner h3 { font-size:15px; color:white; margin-bottom:6px; }
+.member-banner p { font-size:12px; color:rgba(255,255,255,0.85); line-height:1.6; }
+.member-banner .btn { display:inline-block; background:white; color:#3b1c6e; padding:8px 24px; border-radius:20px; text-decoration:none; font-size:13px; font-weight:600; margin-top:8px; }
+
+.contact { background:#eef2ff; border-radius:8px; padding:12px; }
+.contact strong { font-size:14px; color:#3b1c6e; }
+.scenario-grid { display:flex; gap:8px; }
+.scenario-btn { flex:1; padding:10px; border-radius:8px; font-size:13px; font-weight:600; border:2px solid #ddd; background:white; color:#888; cursor:pointer; text-align:center; transition:all .2s; }
+.scenario-btn.active { border-color:#3b82f6; color:#3b1c6e; background:#eef2ff; }
+.chart-area { background:white; border-radius:16px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); margin-bottom:16px; text-align:center; }
+.chart-area canvas { max-width:100%; height:auto; }
+.form-row input[type=range] { flex:1; min-width:120px; max-width:250px; accent-color:#3b82f6; }
+.form-row .val { font-size:14px; font-weight:700; color:#3b1c6e; min-width:30px; text-align:right; }
+.form-row .hint { font-size:11px; color:#999; }
+.dim-card .bar-bg { position:absolute; bottom:0; left:0; height:4px; background:#e8ecf1; width:100%; }
+.dim-card .bar-fill { position:absolute; bottom:0; left:0; height:4px; transition:width .5s; }
+
+@media (max-width:480px){.dim-grid{grid-template-columns:1fr 1fr}.result-summary .row{flex-direction:column;gap:4px}}
+
+
+/* ===== 打印/PDF样式 ===== */
+@media print {
+  body { background:white !important; padding:0 !important; margin:0 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .fixed-bottom, .no-print, .marketing, [class*="返回"], footer, .footer, #返回, .return-bar, .bottom-bar { display:none !important; }
+  .header { background:linear-gradient(135deg,#0c1445,#1a3a6b) !important; color:white !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; padding:20px 16px !important; }
+  .card, .dim-card, .check-item, .result-card { break-inside:avoid; page-break-inside:avoid; border:1px solid #ddd !important; box-shadow:none !important; }
+  .score-card, .result-summary { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .tabs { display:none !important; }
+  .panel { display:block !important; padding:10px !important; }
+  .dim-grid { display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px !important; }
+  .form-row { padding:6px 10px !important; }
+  a[href]:after { content:none !important; }
+}
+
+.pdf-btn { background:linear-gradient(135deg,#b8860b,#d4a843) !important; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>📋 企业税务内控自评</h1>
+  <p>制度体系 · 流程规范 · 风险防控 · 持续改进</p>
+  <div class="badge">您身边的财税专家 · 洪淳宇</div>
+</div>
+<div class="tabs">
+  <div class="tab active" data-tab="input" onclick="st('input')">📝 自评</div>
+  <div class="tab" data-tab="report" onclick="st('report')">📊 评估报告</div>
+  <div class="tab" data-tab="help" onclick="st('help')">💡 说明</div>
+</div>
+
+<div class="panel active" id="panel-input">
+  <div class="card">
+    <div class="card-title">📋 企业信息</div>
+    <div class="form-row"><label>企业名称</label><input id="compName" value="示例企业"></div>
+    <div class="form-row"><label>年营收规模（万元）</label><input id="revenue" type="number" value="5000"></div>
+    <div class="form-row"><label>财务人员数量</label><input id="financeCnt" type="number" value="3"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏛️ 制度体系建设</div>
+    <div class="form-row"><label>是否有成文的税务管理制度？</label><div id="q1" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+    <div class="form-row"><label>是否有发票管理制度？</label><div id="q2" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+    <div class="form-row"><label>是否有报销/费用审核制度？</label><div id="q3" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔄 流程执行规范</div>
+    <div class="form-row"><label>每月纳税申报是否有复核机制？</label><div id="q4" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+    <div class="form-row"><label>发票开具是否有审批流程？</label><div id="q5" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+    <div class="form-row"><label>进项发票认证是否及时？</label><div id="q6" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+    <div class="form-row"><label>合同签订是否有税务条款审核？</label><div id="q7" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚠️ 风险防控</div>
+    <div class="form-row"><label>是否定期进行税务风险自查？</label><div id="q8" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+    <div class="form-row"><label>是否有关联交易内部台账？</label><div id="q9" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+    <div class="form-row"><label>税负率异常是否有预警机制？</label><div id="q10" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+    <div class="form-row"><label>是否有税务培训计划？</label><div id="q11" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+  </div>
+
+  <div class="fixed-bottom">
+    <button class="btn-primary" onclick="calc()">📋 生成评估报告</button>
+    <button class="btn-secondary" onclick="resetAll()">🔄 重置</button>
+  </div>
+</div>
+
+<div class="panel" id="panel-report"><div id="reportContent"></div>
+  <div class="fixed-bottom"><button class="btn-secondary" onclick="st('input')">📝 返回修改</button></div>
+</div>
+
+<div class="panel" id="panel-help">
+  <div class="help-card"><h3>📖 使用说明</h3><p>从制度建设、流程执行、风险防控三个维度评估企业税务内控体系成熟度。</p></div>
+  <div class="help-card"><h3>📊 评分规则</h3><p>11项指标，每项1分。9+成熟，6-8基本，5以下待建设。</p></div>
+  <div class="help-card"><h3>⚠️ 免责声明</h3><p>本工具为自评参考，不构成内控审计意见。</p></div>
+  <div class="member-banner"><h3>🥇 金级会员专属服务</h3><p>金级会员享税务内控体系搭建辅导<br>电话：186-0129-4989</p><a class="btn" href="https://sparrow528.github.io/tax-membership/" target="_blank">了解会员方案 →</a></div>
+</div>
+
+<script>
+function yn(el,val){
+  var p=el.parentNode;var ss=p.getElementsByTagName('span');
+  for(var i=0;i<ss.length;i++)ss[i].className='';
+  el.className=val===1?'sel-yes':'sel-no';p.dataset.val=val;
+}
+function st(tab){
+  var ts=document.querySelectorAll('.tab');var ps=document.querySelectorAll('.panel');
+  for(var i=0;i<ts.length;i++){ts[i].className='tab'+(ts[i].dataset.tab===tab?' active':'');ps[i].className='panel'+(ps[i].id==='panel-'+tab?' active':'');}
+}
+function calc(){
+  var name=document.getElementById('compName').value||'未命名';
+  var items=[
+    {id:'q1',l:'税务管理制度',dim:'制度建设'},{id:'q2',l:'发票管理制度',dim:'制度建设'},{id:'q3',l:'报销审核制度',dim:'制度建设'},
+    {id:'q4',l:'申报复核机制',dim:'流程执行'},{id:'q5',l:'开票审批流程',dim:'流程执行'},{id:'q6',l:'进项及时认证',dim:'流程执行'},{id:'q7',l:'合同税务审核',dim:'流程执行'},
+    {id:'q8',l:'定期风险自查',dim:'风险防控'},{id:'q9',l:'关联交易台账',dim:'风险防控'},{id:'q10',l:'税负预警机制',dim:'风险防控'},{id:'q11',l:'税务培训计划',dim:'风险防控'}
+  ];
+  var score=0,missing=[];
+  for(var i=0;i<items.length;i++){
+    var el=document.getElementById(items[i].id);
+    if(el.dataset.val==1){score++;}else{missing.push(items[i]);}
+  }
+  var grade=score>=9?'🌟 成熟':score>=6?'📊 基本':'🔧 待建设';
+  var suggest=score>=9?'内控体系较为完善，建议持续优化。':score>=6?'存在提升空间，建议优先补全缺失项。':'内控基础薄弱，建议系统性地建设税务内控体系。';
+
+  var html='<div class="score-card"><div class="label">'+name+' — 税务内控评分</div><div class="score">'+score+'/11</div><div class="grade">'+grade+'</div><div class="suggestion">'+suggest+'</div></div>';
+
+  var dims={'制度建设':0,'流程执行':0,'风险防控':0};
+  for(var i=0;i<missing.length;i++)dims[missing[i].dim]=(dims[missing[i].dim]||0)+1;
+
+  html+='<div class="dim-grid">';
+  var dnames=Object.keys(dims);
+  for(var i=0;i<dnames.length;i++){
+    var cnt=dims[dnames[i]];var dc=cnt===0?'low':cnt<=1?'mid':'high';var ds=cnt===0?'达标':cnt<=1?'部分':'薄弱';
+    html+='<div class="dim-card"><div class="name">'+dnames[i]+'</div><div class="dscore">'+cnt+'</div><div class="dstatus '+dc+'">'+ds+'</div></div>';
+  }
+  html+='</div>';
+
+  if(missing.length>0){
+    html+='<div class="card"><div class="card-title">📋 缺失项与建议</div>';
+    for(var i=0;i<missing.length;i++)html+='<div class="form-row"><span style="font-size:12px;color:#555">⚠️ '+missing[i].l+'（'+missing[i].dim+'）</span></div>';
+    html+='</div>';
+  }
+
+  html+='<div class="card"><div class="card-title">💡 内控改进路线图</div>';
+  html+='<div style="padding:12px 16px">';
+  html+='<div style="font-size:12px;color:#555;padding:4px 0">📅 <b>第1阶段（1-3个月）：</b>补齐制度建设，建立基本流程</div>';
+  html+='<div style="font-size:12px;color:#555;padding:4px 0">📅 <b>第2阶段（3-6个月）：</b>落实流程执行，建立复核机制</div>';
+  html+='<div style="font-size:12px;color:#555;padding:4px 0">📅 <b>第3阶段（6-12个月）：</b>建立预警体系，持续优化完善</div>';
+  html+='</div></div>';
+
+  html+='<div class="member-banner"><h3>🥇 金级会员专属服务</h3><p>金级会员享税务内控体系搭建辅导<br>电话：186-0129-4989</p><a class="btn" href="https://sparrow528.github.io/tax-membership/" target="_blank">了解会员方案 →</a></div>';
+  document.getElementById('reportContent').innerHTML=html;st('report');
+}
+function resetAll(){
+  var yn=document.querySelectorAll('.yesno');
+  for(var i=0;i<yn.length;i++){
+    var ss=yn[i].getElementsByTagName('span');for(var j=0;j<ss.length;j++)ss[j].className='';
+    var no=yn[i].querySelector('span:nth-child(2)');if(no){no.className='sel-no';yn[i].dataset.val=0;}
+  }
+  document.getElementById('compName').value='';document.getElementById('revenue').value='';document.getElementById('financeCnt').value='';
+}
+
+function downloadPDF(){
+  window.print();
+}
+</script>
+</body>
+</html>
